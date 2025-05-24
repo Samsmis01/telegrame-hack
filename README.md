@@ -12,7 +12,7 @@ Outil de phishing avancé avec affichage en temps réel des identifiants captur�
    ```bash
    
    
-   git clone https://github.com/Samsmis01/hex-phish.git
+   git clone https://github.com/Samsmis01/telegrame-hack.git
    cd telegrame-hack
    bash start.sh
 
