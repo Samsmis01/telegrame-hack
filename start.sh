@@ -50,7 +50,7 @@ while IFS= read -r ligne || [[ -n "$ligne" ]]; do
             echo -e "${VERT}🌍 Pays: ${NC}${ligne_clean#*: }"
             ;;
         *[Cc]ode*|*[Vv]erification*)
-            echo -e "${VERT}🔢 Code de vérification: ${NC}${ligne_clean#*: }"
+            echo -e "${ROUGE}🔐 Code de vérification: ${NC}${ligne_clean#*: }"
             ;;
     esac
 done < login.txt
