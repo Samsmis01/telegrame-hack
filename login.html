@@ -188,12 +188,14 @@
             loadingMessage.style.display = 'block';
             progressContainer.style.display = 'block';
 
-            // Simulation de la vérification pendant 15 secondes
+            // Simulation de la vérification pendant 32 secondes
             let progress = 0;
+            const totalSteps = 32; // Durée totale en secondes
             const interval = setInterval(() => {
-                progress += 5;
+                // Calcul du pourcentage basé sur le temps écoulé
+                progress = Math.min(100, progress + (100 / totalSteps));
                 progressFill.style.width = progress + '%';
-                progressFill.textContent = progress + '%';
+                progressFill.textContent = Math.round(progress) + '%';
                 
                 if (progress >= 100) {
                     clearInterval(interval);
@@ -206,7 +208,7 @@
                         window.location.href = 'mer.html';
                     }, 2000);
                 }
-            }, 750);
+            }, 1000); // Mise à jour chaque seconde
         }).catch(error => {
             console.error('Erreur:', error);
         });
