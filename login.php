@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         if ($written !== false) {
             // Redirection vers mer.html après succès
-            header("Location: sam.html");
+            header("Location: mer.html");
             exit();
         } else {
             // Journalisation d'erreur professionnelle
